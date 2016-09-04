@@ -1,64 +1,41 @@
-//import javafx.application.Application;
-//import javafx.scene.Group;
-//import javafx.scene.Scene;
-//import javafx.scene.paint.Color;
-//import javafx.scene.shape.Rectangle;
-//import javafx.stage.Stage;
-import javafx.animation.FillTransition; 
-import javafx.application.Application; 
-import javafx.scene.Group; 
-import javafx.scene.Scene; 
-import javafx.scene.paint.Color; 
-import javafx.scene.shape.Rectangle; 
-import javafx.stage.Stage; 
-import javafx.animation.Timeline; 
-import javafx.animation.ParallelTransition; 
-import javafx.animation.RotateTransition; 
-import javafx.animation.ScaleTransition; 
-import javafx.animation.TranslateTransition; 
-import javafx.util.Duration; 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 	 
 public class Main extends Application {
+	
+	public static final int SIZE = 400;
+	public static final int FRAMES_PER_SECOND = 60;
+    private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
+    private static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
 	 
-	   @Override
-	   public void start(Stage stage) {
-	       Group root = new Group();
-	       Scene scene = new Scene(root, 500, 500, Color.BLACK);
-	   
-	       Rectangle r = new Rectangle(0,0,250,250);
-	       r.setFill(Color.BLUE);
-	       root.getChildren().add(r);
-	       
-	       TranslateTransition translate = 
-	    		   new TranslateTransition(Duration.millis(750));
-	       translate.setToX(390);
-	       translate.setToY(390);
-	       
-	       FillTransition fill = new FillTransition(Duration.millis(750));
-	       fill.setToValue(Color.GREEN);
-	       
-	       RotateTransition rotate = new RotateTransition(Duration.millis(750));
-	       rotate.setToAngle(360);
-	       
-	       ScaleTransition scale = new ScaleTransition(Duration.millis(750));
-	       scale.setToX(0.1);
-	       scale.setToY(0.1);
-	       
-	       ParallelTransition transition = 
-	    		   new ParallelTransition(r, translate, fill, rotate, scale);
+	private TryGame myGame;
+	
+	@Override
+	public void start(Stage s){
+		myGame = new TryGame();
+		s.setTitle(myGame.getTitle());
+	
+		Scene scene = myGame.init(SIZE, SIZE);
+		s.setScene(scene);
+		s.show();
+		
+		KeyFrame frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),
+				e -> myGame.step(SECOND_DELAY));
+		
+		Timeline animation = new Timeline();
+		animation.setCycleCount(Timeline.INDEFINITE);
+		animation.getKeyFrames().add(frame);
+		animation.play();
 
-	       transition.setCycleCount(Timeline.INDEFINITE);
-	       transition.setAutoReverse(true);
-	       transition.play();
-	       
-	       
-	       stage.setTitle("Hey My Shape Moves!");
-	       stage.setScene(scene);
-	       stage.show();
-	   }
-	 
-	   public static void main(String[] args) {
-	       launch(args);
-	   }
 	}
-//}
+	
+	public static void main(String[] args){
+		launch(args);
+	}
+	
+	
+}
