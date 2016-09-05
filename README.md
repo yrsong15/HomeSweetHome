@@ -1,6 +1,18 @@
 # Home Sweet Home
 First project for CompSci 308 Fall 2016 by Ray Song(ys101).
 
+## Programming Log
+
+**Sept 3rd** 
++ Completed crude version of Level One. Game automatically shuts down when all three strawberries are consumed. 
+**Sept 4th**
++ Completed crude version of Intro Page which leads to main game by mouse click input.
+
+**TODO**
++ TODO: Implement End-Of-Game Message
++ TODO: Implement a clear sign for beginning/end of game, as well as transition to Level Two.
++ TODO: Implement Level Two
+
 ## Design
 The game design has been detailed on DESIGN.txt. It can also be viewed below; I personally prefer *Markdown* to normal .txt files.
 
