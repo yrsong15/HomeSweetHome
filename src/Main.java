@@ -23,36 +23,25 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage s){
+//		new FirstClass();
 		mainstage = s;
 		startMessage = new StartMessage();
-		myGame = new TryGame();
-		endMessage = new EndMessage();
-		s.setTitle(myGame.getTitle());
+//		endMessage = new EndMessage();
 		
 		pane1=new FlowPane();
-	    pane2=new FlowPane();
-		
-//		Scene intro = startMessage.init(SIZE, SIZE);
-//		s.setScene(intro);
-//		s.show();
-//		
-//		KeyFrame introframe = new KeyFrame(Duration.millis(MILLISECOND_DELAY),
-//				e -> startMessage.step(SECOND_DELAY));
-//		
-//		Timeline introanimation = new Timeline();
-//		introanimation.setCycleCount(Timeline.INDEFINITE);
-//		introanimation.getKeyFrames().add(introframe);
-//		introanimation.play();
-		
 	
-		scene1 = startMessage.init(pane1, SIZE, SIZE);
-		scene2 = myGame.init(SIZE, SIZE);
-		scene3 = endMessage.init(pane2, SIZE, SIZE);
-			
-		scene1.setOnMouseClicked(e -> handleMouseInput(e.getX(), e.getY()));
-		
+//		scene1 = startMessage.init(pane1, SIZE, SIZE);
+		scene1 = startMessage.init(SIZE, SIZE);
+
 		s.setScene(scene1);
 		s.show();
+		
+		scene1.setOnMouseClicked(e -> handleMouseInput(e.getX(), e.getY()));
+		
+		
+		myGame = new TryGame();
+		scene2 = myGame.init(SIZE, SIZE);
+		s.setTitle(myGame.getTitle());
 		
 		KeyFrame frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),
 				e -> myGame.step(SECOND_DELAY));
@@ -61,17 +50,31 @@ public class Main extends Application {
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.getKeyFrames().add(frame);
 		animation.play();	
-		
-
-		
 
 	}
 	
     private void handleMouseInput (double x, double y) {
+    	
+    	//add if statement to check that this came from scene1
         mainstage.setScene(scene2);
+        
+//    	mainstage.close();
     }
 	
 	public static void main(String[] args){
 		launch(args);
 	}
 }
+
+
+//Scene intro = startMessage.init(SIZE, SIZE);
+//s.setScene(intro);
+//s.show();
+//
+//KeyFrame introframe = new KeyFrame(Duration.millis(MILLISECOND_DELAY),
+//		e -> startMessage.step(SECOND_DELAY));
+//
+//Timeline introanimation = new Timeline();
+//introanimation.setCycleCount(Timeline.INDEFINITE);
+//introanimation.getKeyFrames().add(introframe);
+//introanimation.play();

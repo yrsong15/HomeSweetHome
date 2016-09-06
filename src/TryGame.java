@@ -80,10 +80,10 @@ public class TryGame {
 	public Scene init(int width, int height){
 		Group root = new Group();
 		myScene = new Scene(root, width, height, Color.BEIGE);
-		Image dog = new Image(getClass().getClassLoader().getResourceAsStream("dog.png"));
-		Image berry1 = new Image(getClass().getClassLoader().getResourceAsStream("strawberry.jpg"));
-		Image berry2 = new Image(getClass().getClassLoader().getResourceAsStream("strawberry.jpg"));
-		Image berry3 = new Image(getClass().getClassLoader().getResourceAsStream("strawberry.jpg"));
+		Image dog = new Image(getClass().getClassLoader().getResourceAsStream("dog.gif"));
+		Image berry1 = new Image(getClass().getClassLoader().getResourceAsStream("strawberry.png"));
+		Image berry2 = new Image(getClass().getClassLoader().getResourceAsStream("strawberry.png"));
+		Image berry3 = new Image(getClass().getClassLoader().getResourceAsStream("strawberry.png"));
 		mimi = new ImageView(dog);
 		
 		strawberry1 = new ImageView(berry1); strawberries.add(strawberry1);
@@ -110,6 +110,7 @@ public class TryGame {
 	}
 	
 	public void step(double elapsedTime){
+	
 		int positionCount = 0;
 		while(positionCount < strawberries.size()){
 			ImageView berryRightNow = strawberries.get(positionCount);
@@ -155,9 +156,10 @@ public class TryGame {
     
     // What to do each time a mouse is pressed
     private void handleMouseInput (double x, double y) {
-        if (mimi.contains(x, y)) {
-            mimi.setScaleX(mimi.getScaleX() * GROWTH_RATE);
-            mimi.setScaleY(mimi.getScaleY() * GROWTH_RATE);
+        if (strawberry2.contains(x, y)) {
+        	
+        	//IMPLEMENT END-OF-GAME
+            Platform.exit();
         }
     }
 	

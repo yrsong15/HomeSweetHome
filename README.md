@@ -1,20 +1,30 @@
-# Home Sweet Home
+# Home Sweet Home :dog: :heart: :strawberry: 
 First project for CompSci 308 Fall 2016 by Ray Song(ys101).
 
 ## Programming Log
 
 **Sept 3rd** 
 + Completed crude version of Level One. Game automatically shuts down when all three strawberries are consumed. 
+
 **Sept 4th**
 + Completed crude version of Intro Page which leads to main game by mouse click input.
+
+**Sept 5th**
++ Added cheat code to game: **Clicking on the vertical-moving strawberry will automatically end game**
++ Struggling (mightily) with implementing end-of-game messages.
+
+**Sept 6th**
++ Updated image to vector files for better view.
+
 
 **TODO**
 + TODO: Implement End-Of-Game Message
 + TODO: Implement a clear sign for beginning/end of game, as well as transition to Level Two.
 + TODO: Implement Level Two
++ TODO: Implement Winning Condition (ex: within 10 seconds, show clock in game as well)
 
 ## Design
-The game design has been detailed on DESIGN.txt. It can also be viewed below; I personally prefer *Markdown* to normal .txt files.
+The game design has been detailed on DESIGN.txt. It can also be viewed below; I personally prefer *Markdown* to normal *.txt* files.
 
 **Genre**
 + Home Sweet Home is a 2-D Scrolling Platformer game featuring Mimi the fur rat. 
