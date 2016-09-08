@@ -16,12 +16,14 @@ First project for CompSci 308 Fall 2016 by Ray Song(ys101).
 **Sept 6th**
 + Updated image to vector files for better view.
 
+**Sept 7th**
++ Implemented levels to enable smooth transitions between modes.
++ Pushed initial version of game
 
 **TODO**
-+ TODO: Implement End-Of-Game Message
-+ TODO: Implement a clear sign for beginning/end of game, as well as transition to Level Two.
-+ TODO: Implement Level Two
 + TODO: Implement Winning Condition (ex: within 10 seconds, show clock in game as well)
++ TODO: Implement more challenging Level 2
++ TODO: Refine instructions on splash pages for games
 
 ## Design
 The game design has been detailed on DESIGN.txt. It can also be viewed below; I personally prefer *Markdown* to normal *.txt* files.
