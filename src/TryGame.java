@@ -6,6 +6,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -25,6 +28,7 @@ public class TryGame {
 	private ImageView strawberry2;
 	private ImageView strawberry3;
 	public boolean endOfGame = false;
+	private Group root;
 	
 	public String getTitle(){
 		return TITLE;
@@ -78,7 +82,7 @@ public class TryGame {
 	
 //	public Scene init(FlowPane pane, int width, int height){
 	public Scene init(int width, int height){
-		Group root = new Group();
+		root = new Group();
 		myScene = new Scene(root, width, height, Color.BEIGE);
 		Image dog = new Image(getClass().getClassLoader().getResourceAsStream("dog.gif"));
 		Image berry1 = new Image(getClass().getClassLoader().getResourceAsStream("strawberry.png"));
@@ -125,10 +129,18 @@ public class TryGame {
 				&& strawberry3.getImage() == null){
 			
 			endOfGame = true;	
-			Platform.exit();
-		}
-		
-		if(endOfGame){
+			
+			Text t = new Text (10, 20, "Congratulations, Mimi is back home!");
+			Text t2 = new Text (10, 50, "Click to Exit");
+			
+			t.setFont(Font.font ("Verdana", 20));
+			t.setFill(Color.ROYALBLUE);
+			
+			t2.setFont(Font.font ("Verdana", 20));
+			t2.setFill(Color.ROYALBLUE);
+			
+			root.getChildren().add(t);
+			root.getChildren().add(t2);
 			
 		}
 		
@@ -157,8 +169,8 @@ public class TryGame {
     // What to do each time a mouse is pressed
     private void handleMouseInput (double x, double y) {
         if (strawberry2.contains(x, y)) {
-        	
         	//IMPLEMENT END-OF-GAME
+        	endOfGame = true;	
             Platform.exit();
         }
     }
