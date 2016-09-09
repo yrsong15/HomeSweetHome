@@ -3,22 +3,26 @@ First project for CompSci 308 Fall 2016 by Ray Song(ys101).
 
 ## Programming Log
 
-**Sept 3rd** 
-+ Completed crude version of Level One. Game automatically shuts down when all three strawberries are consumed. 
+**Sept 9th**
++ Implemented Level One and Level Two
++ Working on algorithmically different Level Two
 
-**Sept 4th**
-+ Completed crude version of Intro Page which leads to main game by mouse click input.
+**Sept 7th**
++ Implemented levels to enable smooth transitions between modes.
++ Pushed initial version of game
+
+**Sept 6th**
++ Updated image to vector files for better view.
 
 **Sept 5th**
 + Added cheat code to game: **Clicking on the vertical-moving strawberry will automatically end game**
 + Struggling (mightily) with implementing end-of-game messages.
 
-**Sept 6th**
-+ Updated image to vector files for better view.
+**Sept 4th**
++ Completed crude version of Intro Page which leads to main game by mouse click input.
 
-**Sept 7th**
-+ Implemented levels to enable smooth transitions between modes.
-+ Pushed initial version of game
+**Sept 3rd** 
++ Completed crude version of Level One. Game automatically shuts down when all three strawberries are consumed. 
 
 **TODO**
 + TODO: Implement Winning Condition (ex: within 10 seconds, show clock in game as well)
