@@ -24,6 +24,6 @@ public class StartGame {
 		Timeline animation = new Timeline();
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.getKeyFrames().add(frame);
-		animation.play();	
+		animation.play();
 	}
 }
