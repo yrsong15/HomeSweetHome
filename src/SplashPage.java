@@ -17,4 +17,11 @@ public class SplashPage {
 		t.setFill(c);
 		return t;
 	}
+	
+	public Text formattedMessage(int width, int height, String text, Color c){
+		Text t = new Text(width, height, text);
+		t.setFont(Font.font ("Verdana", 20));
+		t.setFill(c);
+		return t;
+	}
 }

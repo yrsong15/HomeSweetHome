@@ -13,32 +13,39 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TheGame {
 	public static final String TITLE = "Home Sweet Home";
 	public static final int SIZE = 600;
-	public static final int KEY_INPUT_SPEED = 50; 
+	public static int KEY_INPUT_SPEED = 50; 
 	
-	private static final int MIMI_SIZE = 50;
+	private static int MIMI_SIZE = 50;
 	private static final int HOME_SIZE = 30;
-	private static final int RAT_SIZE = 30;
+	private static final int RAT_SIZE = 25;
 	private static final int JAR_SIZE = 20;
 	private static final int TAXI_SIZE = 40;
+	private static final int ITEM_SIZE = 30;
 	
 	private static final int RAT_SPEED = 60;
 	private static final int JAR_SPEED = 40;
 	private static final int TAXI_SPEED = 100;
+	private static final int ITEM_SPEED = 200;
 	
 	private static final int NUMBER_OF_JARS = 5;
-	private static final int NUMBER_OF_TAXIS = 12;
+	private static final int NUMBER_OF_TAXIS = 10;
 	private static final int NUMBER_OF_RATS = 30;
+	
+	private static final float TIME_LIMIT_ONE = 15f;
+	private static final float TIME_LIMIT_TWO = 20f;
+	
 	
 	private SplashPage page;
 	private Scene myScene;
 	private Timer timer;
 	
-	private ImageView mimi, home;
-	private ArrayList<ImageView> rats, jarsOfJam, taxis;
-	private int[] ratDirection, jarDirection, taxiDirection;
+	private ImageView mimi, home, star, potion;
+	private ArrayList<ImageView> rats, jarsOfJam, taxis, items;
+	private int[] ratDirection, jarDirection, taxiDirection, itemDirection;
 	
 	private Group root;
 	private int level;
+	private boolean invincible = false;
 	private boolean noJailBreak = true;
 	
 	public Scene init(int width, int height){
@@ -50,24 +57,41 @@ public class TheGame {
 	}
 	
 	public void step(double elapsedTime){
-//		System.out.println(level);
-		System.out.println(timer.getTime());
-		if(level == 1){	
+		
+		if(level == 1){
+			timer.resetTimer();
+			level++;
+		}
+		if(level == 2){	
 			gameLevelOne(elapsedTime);
 		}
 		
-		if(level == 2){
-			setLevelTwo();
+		if(level == 3){
+			initLevelTwo();
+			level++;
 		}
 		
-		if(level == 3){
+		
+		if(level == 4){
+			showLevelTwo();
+		}
+		
+		if(level == 5){
+			timer.resetTimer();
+			level++;
+		}
+		
+		if(level == 6){
 			gameLevelTwo(elapsedTime);
 		}
+		
+		
 		if(level == 8){
 			root.getChildren().add(showMessage
 					("Mimi didn't watch where she was going!\n\nGet well soon :("
 					,Color.MAROON));
 		}
+		
 		
 		if(level == 9){
 			root.getChildren().add(showMessage
@@ -78,7 +102,14 @@ public class TheGame {
 			root.getChildren().add(showMessage
 					("You're DONE!!!!\n\nClick to exit."));
 		}
-		if(level == 11){
+		
+		if(level == 99){
+			root.getChildren().add(showMessage
+					("Time out! Mimi has to run faster :("
+					, Color.MAROON));
+		}
+		
+		if(level == 100){
 			Platform.exit();
 		}
 	}
@@ -106,7 +137,6 @@ public class TheGame {
 	public void initializeMap(){
 		root = new Group();
 		page = new SplashPage();
-		
 		timer =  new Timer();
 		
 		Text firstmsg = page.message(SIZE, SIZE, 
@@ -114,42 +144,61 @@ public class TheGame {
 		root.getChildren().add(firstmsg);
 		level = 0;
 		
-		ratDirection = initializeDirection(ratDirection, NUMBER_OF_RATS);
 		jarDirection = initializeDirection(jarDirection, NUMBER_OF_JARS);
 		taxiDirection = initializeDirection(taxiDirection, NUMBER_OF_TAXIS);
 		
 		jarsOfJam = makeObjects(NUMBER_OF_JARS, "jam.png");
 		taxis = makeObjects(NUMBER_OF_TAXIS, "taxi.gif");
-		rats = makeObjects(NUMBER_OF_RATS, "rats.png");
 		
-		Image dog = new Image(getClass().getClassLoader().getResourceAsStream("dog.gif"));
-		mimi = new ImageView(dog);
-		
-		Image house = new Image(getClass().getClassLoader().getResourceAsStream("home.png"));
-		home = new ImageView(house);
+		mimi = initSingleObj("dog.gif");
+		home = initSingleObj("home.png");
 	
 		setUpMap();
 	}
+
+	private ImageView initSingleObj(String filename) {
+		Image image = new Image(getClass().getClassLoader().getResourceAsStream(filename));
+		ImageView character = new ImageView(image);
+		return character;
+	}
 	
-	public void setUpMap(){	
-		setObjects(rats, NUMBER_OF_RATS, RAT_SIZE);
+	public void setUpMap(){
 		setObjects(jarsOfJam, NUMBER_OF_JARS, JAR_SIZE);
 		setObjects(taxis, NUMBER_OF_TAXIS, TAXI_SIZE);
 		setMimiPosition(taxis);
-		setMimiPosition(jarsOfJam);	
 	}
 
 	private void setMimiPosition(ArrayList<ImageView> list) {
 		int[] mimiPosition = generateRandom(2, 0, SIZE-MIMI_SIZE);
-		for(ImageView elem : list){
-			if(Math.abs(elem.getX() - mimiPosition[0]) < MIMI_SIZE * 4){
+		for(int i=0;i<list.size();i++){
+			if(Math.abs(list.get(i).getX() - mimiPosition[0]) < MIMI_SIZE){
 				mimiPosition[0] = ThreadLocalRandom.current().nextInt(0, SIZE-MIMI_SIZE + 1);
+				i = 0;
 			}
-			if(Math.abs(elem.getY() - mimiPosition[1]) < MIMI_SIZE * 4){
+			if(Math.abs(list.get(i).getY() - mimiPosition[1]) < MIMI_SIZE){
 				mimiPosition[1] = ThreadLocalRandom.current().nextInt(0, SIZE-MIMI_SIZE + 1);
+				i = 0;
 			}
 		}
 		setPosition(mimi, MIMI_SIZE, MIMI_SIZE, mimiPosition[0], mimiPosition[1]);
+	}
+	
+	private void setMimiToCorner(ArrayList<ImageView> list) {
+		int x = 0;
+		int y = 0;
+		for(int i=0;i<list.size();i++){
+			if(list.get(i).getX() < MIMI_SIZE){
+				list.get(i).setX(ThreadLocalRandom.current().nextInt
+						(MIMI_SIZE, SIZE-MIMI_SIZE + 1));
+				i = 0;
+			}
+			if(list.get(i).getY() < MIMI_SIZE){
+				list.get(i).setY(ThreadLocalRandom.current().nextInt
+						(MIMI_SIZE, SIZE-MIMI_SIZE + 1));
+				i = 0;
+			}
+		}
+		setPosition(mimi, MIMI_SIZE, MIMI_SIZE, x, y);
 	}
 	
 	private int[] initializeDirection(int[] array, int num) {
@@ -178,6 +227,12 @@ public class TheGame {
 		return temp;
 	}
 	
+	public ImageView minimize(ImageView temp){
+		temp.setFitWidth(10);
+		temp.setFitHeight(10);
+		return temp;
+	}
+	
 	public int[] generateRandom(int elems, int min, int max){
 		int[] temp = new int[elems];
 		for(int i=0;i<elems;i++){
@@ -187,11 +242,10 @@ public class TheGame {
 	}
 	
 	public int keepInBounds(Scene scene, ImageView temp, int direction, int size){
-		Scene tempScene = scene;
-		if(temp.getX() > tempScene.getWidth() - size || temp.getX() < 0){
+		if(temp.getX() > scene.getWidth() - size || temp.getX() < 0){
 			direction *= -1;
 		}
-		if(temp.getY() > tempScene.getHeight() - size || temp.getY() < 0){
+		if(temp.getY() > scene.getHeight() - size || temp.getY() < 0){
 			direction *= -1;
 		}
 		return direction;
@@ -227,16 +281,16 @@ public class TheGame {
 			int objSpeed, double elapsedTime){
 		if(xy%4 == 0){
 			object.setX(object.getX() + direction * objSpeed * elapsedTime);
+			object.setY(object.getY() + direction * objSpeed * elapsedTime);
 		}
 		else if(xy%4 == 1){
+			object.setX(object.getX() - direction * objSpeed * elapsedTime);
 			object.setY(object.getY() + direction * objSpeed * elapsedTime);
 		}
 		else if(xy%4 == 3){
 			object.setX(object.getX() + direction * objSpeed * elapsedTime);
-			object.setY(object.getY() + direction * objSpeed * elapsedTime);
 		}
 		else{
-			object.setX(object.getX() - direction * objSpeed * elapsedTime);
 			object.setY(object.getY() + direction * objSpeed * elapsedTime);
 		}
 	}
@@ -257,6 +311,13 @@ public class TheGame {
 		root.getChildren().add(mimi);
 		root.getChildren().addAll(jarsOfJam);
 		root.getChildren().addAll(taxis);
+		root.getChildren().add(page.formattedMessage(SIZE/60, SIZE/20, 
+				"Time Left: " + timer.countdown(TIME_LIMIT_ONE), Color.MAROON));
+		
+		if(!noJailBreak){
+			root.getChildren().add(page.formattedMessage(SIZE/2, SIZE/20, 
+					"JAILBREAK ENABLED", Color.RED));
+		}
 		
 		runGameLoop(jarsOfJam, jarDirection, JAR_SPEED, JAR_SIZE, elapsedTime);
 		runGameLoop(taxis, taxiDirection, TAXI_SPEED, JAR_SIZE, elapsedTime);
@@ -276,19 +337,42 @@ public class TheGame {
 				break;
 			}
 		}
-		if(allGone) level = 2;
+	
+		if(allGone) level = 3;
+		if(timer.getTimeValue() >= TIME_LIMIT_ONE) level = 99;
 		if(noJailBreak && mugged) level = 8;
 	}
 	
-	public void setLevelTwo(){
+	public void initLevelTwo(){
+		ratDirection = initializeDirection(ratDirection, NUMBER_OF_RATS);
+		itemDirection = initializeDirection(itemDirection, 2);
+		rats = makeObjects(NUMBER_OF_RATS, "rats.png");
+		setObjects(rats, NUMBER_OF_RATS, RAT_SIZE);
+		star = initSingleObj("star.png");
+		potion = initSingleObj("potion.png");
+		setItemPosition();
+		items = new ArrayList<ImageView>();
+		items.add(star);
+		items.add(potion);
+	}
+	
+	public void setItemPosition(){
+		int[] itemPosition = generateRandom(4, 0, SIZE-ITEM_SIZE);
+		setPosition(star, ITEM_SIZE, ITEM_SIZE, itemPosition[0], itemPosition[1]);
+		setPosition(potion, ITEM_SIZE, ITEM_SIZE, itemPosition[2], itemPosition[3]);
+	}
+	
+	public void showLevelTwo(){
 		root.getChildren().clear();
-		setPosition(mimi, MIMI_SIZE, MIMI_SIZE, 0, 0);
+//		setPosition(mimi, MIMI_SIZE, MIMI_SIZE, 0, 0);
+		setMimiToCorner(rats);
 		root.getChildren().add(mimi);
 		Text text3 = page.message(SIZE, SIZE, 
 				"You've cleared Level One!\n\nClick to proceed.");
 		root.getChildren().add(text3);
 		setPosition(home, HOME_SIZE, HOME_SIZE, SIZE-HOME_SIZE, SIZE-HOME_SIZE);
 		root.getChildren().add(home);
+		timer.resetTimer();
 	}
 	
 	public void gameLevelTwo(double elapsedTime){
@@ -296,16 +380,41 @@ public class TheGame {
 		root.getChildren().add(mimi);
 		root.getChildren().addAll(rats);
 		root.getChildren().add(home);
+		root.getChildren().addAll(items);
+		root.getChildren().add(page.formattedMessage(SIZE/60, SIZE/20, 
+				"Time Left: " + timer.countdown(20), Color.MAROON));
+		
+		if(!noJailBreak){
+			root.getChildren().add(page.formattedMessage(SIZE/2, SIZE/20, 
+					"JAILBREAK ENABLED", Color.RED));
+			
+		}
 		
 		runGameLoop(rats, ratDirection, RAT_SPEED, RAT_SIZE, elapsedTime);
+		runGameLoop(items, itemDirection, ITEM_SPEED, ITEM_SIZE, elapsedTime);
 		
 		boolean out = false;
 		for(ImageView rat : rats){
 			if(rat.getImage() == null){
-				out = true;
-				break;
+				if(!invincible){
+					out = true;
+					break;
+				}
 			}
 		}
+		
+		if(!invincible && star.getImage() == null){
+			invincible = true;
+		}
+		
+		if(potion.getImage() == null){
+			mimi = minimize(mimi);
+			MIMI_SIZE = 10;
+		}
+		
+			
+		if(timer.getTimeValue() >= TIME_LIMIT_TWO) level = 99;
+		
 		if(noJailBreak && out){
 			level = 9;
 		}
@@ -313,8 +422,6 @@ public class TheGame {
 		if(reachHome(mimi, home)){
 			level = 10;
 		}
-		
-		
 	}
 
 	private void runGameLoop(ArrayList<ImageView> list, int[] directions, 
@@ -360,8 +467,13 @@ public class TheGame {
                 
             //Jailbreak Cheat Code: Press Q
             case Q:
-            	System.out.println("Cheat Code - Jailbreak Enabled!");
-            	noJailBreak = false;
+            	noJailBreak = !noJailBreak;
+            	if(noJailBreak){
+            		System.out.println("Jailbreak Disabled!");
+            	}
+            	else{
+            		System.out.println("Jailbreak Enabled!");
+            	}
             	break;
             default: // do nothing
         }
@@ -369,23 +481,18 @@ public class TheGame {
     
     
     private void handleMouseInput (double x, double y) {
-    	if(level == 0 || level == 2 || level == 10){
+    	if(level == 0 || level == 4){
     		level++;
     		return;
     	}
-    	if(level == 8 || level == 9){
-    		level = 11;
+    	if(level == 8 || level == 9 || level == 10 || level == 99){
+    		level = 100;
     		return;
     	}
     	
-    	//Cheat Code
-    	if(x < 30 && y < 30){
-    		System.out.println("Cheat Code - You Win!");
-    		level = 10;
-    	}
         if (mimi.contains(x, y)) {
         	System.out.println("Cheat Code - Proceed to Level Two");
-            level = 2;
+            level = 3;
         }
     }
 	

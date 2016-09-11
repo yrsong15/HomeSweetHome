@@ -1,36 +1,37 @@
-import javafx.animation.AnimationTimer;
 
 public class Timer{
+	private long startTime;
+	private float duration;
 	
-	AnimationTimer timer;
-	boolean running = false;
-    double time;
-
-	public Timer(){
-        
-        timer = new AnimationTimer() {
-        private long startTime;
-        @Override
-        public void start() {
-            startTime = System.currentTimeMillis();
-            running = true;
-            super.start();
-        }
-        @Override
-        public void stop() {
-            running = false;
-            super.stop();
-        }
-        @Override
-        public void handle(long timestamp) {
-            long now = System.currentTimeMillis();
-//                time.set((now - startTime) / 1000.0);
-            time = now - startTime / 1000.0;
-        }   
-        };
+	Timer(){
+		startTime = System.nanoTime();
 	}
 	
-	public double getTime(){
-		return time;
+	public void resetTimer(){
+		startTime = System.nanoTime();
+		return;
 	}
+	
+	public String getFormattedTime(){
+		long currTime = System.nanoTime();
+		duration = (currTime - startTime) / 1000000000f;
+		String res = String.format("%.2f", duration);
+		return res;
+	}
+	
+	public String countdown(float limit){
+		long currTime = System.nanoTime();
+		duration = (currTime - startTime) / 1000000000f;
+		float countdown = limit - duration;
+		String res = String.format("%.2f", countdown);
+		return res;
+	}
+	
+	
+	public float getTimeValue(){
+		long currTime = System.nanoTime();
+		duration = (currTime - startTime) / 1000000000f;
+		return duration;
+	}
+	
 }
