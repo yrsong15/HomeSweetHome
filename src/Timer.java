@@ -23,6 +23,9 @@ public class Timer{
 		long currTime = System.nanoTime();
 		duration = (currTime - startTime) / 1000000000f;
 		float countdown = limit - duration;
+		if(countdown < 0){
+			countdown = 0;
+		}
 		String res = String.format("%.2f", countdown);
 		return res;
 	}

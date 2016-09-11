@@ -14,26 +14,29 @@ public class TheGame {
 	private final String TITLE = "Home Sweet Home";
 	private final int SIZE = 600;
 	
-	private final int HOME_SIZE = 30;
+	private final int HOME_SIZE = 50;
 	private final int RAT_SIZE = 25;
 	private final int JAR_SIZE = 20;
 	private final int TAXI_SIZE = 40;
 	private final int ITEM_SIZE = 20;
+	private final int LVL1_MIMI_SIZE = 40;
+	private final int LVL2_MIMI_SIZE = 30;
 	
-	private final int RAT_SPEED = 60;
+	private final int RAT_SPEED = 45;
 	private final int JAR_SPEED = 40;
 	private final int TAXI_SPEED = 100;
 	private final int ITEM_SPEED = 300;
 	
+	private final int NUMBER_OF_ITEMS = 2;
 	private final int NUMBER_OF_JARS = 5;
 	private final int NUMBER_OF_TAXIS = 10;
-	private final int NUMBER_OF_RATS = 30;
+	private final int NUMBER_OF_RATS = 15;
 	
 	private final float TIME_LIMIT_ONE = 15f;
-	private final float TIME_LIMIT_TWO = 20f;
+	private final float TIME_LIMIT_TWO = 10f;
 
 	private int KEY_INPUT_SPEED = 50;
-	private int MIMI_SIZE = 50;
+	private int MIMI_SIZE;
 	
 	private SplashPage page;
 	private Scene myScene;
@@ -42,6 +45,7 @@ public class TheGame {
 	private ImageView mimi, home, star, potion;
 	private ArrayList<ImageView> rats, jarsOfJam, taxis, items;
 	private int[] ratDirection, jarDirection, taxiDirection, itemDirection;
+	private float[] ratAcceleration, itemAcceleration;
 	
 	private Group root;
 	private int level;
@@ -138,13 +142,15 @@ public class TheGame {
 		page = new SplashPage();
 		timer =  new Timer();
 		
+		MIMI_SIZE = LVL1_MIMI_SIZE;
+		
 		Text firstmsg = page.message(SIZE, SIZE, 
 				"Click anywhere to proceed to game");
 		root.getChildren().add(firstmsg);
 		level = 0;
 		
-		jarDirection = initializeDirection(jarDirection, NUMBER_OF_JARS);
-		taxiDirection = initializeDirection(taxiDirection, NUMBER_OF_TAXIS);
+		jarDirection = initializeDirection(jarDirection, NUMBER_OF_JARS*2);
+		taxiDirection = initializeDirection(taxiDirection, NUMBER_OF_TAXIS*2);
 		
 		jarsOfJam = makeObjects(NUMBER_OF_JARS, "jam.png");
 		taxis = makeObjects(NUMBER_OF_TAXIS, "taxi.gif");
@@ -182,28 +188,15 @@ public class TheGame {
 		setPosition(mimi, MIMI_SIZE, MIMI_SIZE, mimiPosition[0], mimiPosition[1]);
 	}
 	
-	private void setMimiToCorner(ArrayList<ImageView> list) {
-		int x = 0;
-		int y = 0;
-		for(int i=0;i<list.size();i++){
-			if(list.get(i).getX() < MIMI_SIZE){
-				list.get(i).setX(ThreadLocalRandom.current().nextInt
-						(MIMI_SIZE, SIZE-MIMI_SIZE + 1));
-				i = 0;
-			}
-			if(list.get(i).getY() < MIMI_SIZE){
-				list.get(i).setY(ThreadLocalRandom.current().nextInt
-						(MIMI_SIZE, SIZE-MIMI_SIZE + 1));
-				i = 0;
-			}
-		}
-		setPosition(mimi, MIMI_SIZE, MIMI_SIZE, x, y);
-	}
-	
-	private int[] initializeDirection(int[] array, int num) {
+	public int[] initializeDirection(int[] array, int num) {
 		array = new int[num];
 		for(int i=0;i<array.length;i++){
-			array[i] = 1;
+			if(i%3 == 1){
+				array[i] = -1;
+			}
+			else{
+				array[i] = 1;
+			}
 		}
 		return array;
 	}
@@ -213,7 +206,28 @@ public class TheGame {
 		int[] positions = generateRandom(numOfObjs*2, 0, SIZE - size);
 		while(count < list.size()){
 			ImageView objRightNow = list.get(count);
-			setPosition(objRightNow, size, size, positions[count], positions[count+1]);
+			setPosition(objRightNow, size, size, positions[count*2], positions[count*2+1]);
+			count++;
+		}
+	}
+	
+	public void setObjectsInCorner(ArrayList<ImageView> list, int numOfObjs, int size){
+		int count = 0;
+		int[] positions = generateRandom(numOfObjs, 0, SIZE - size);
+		while(count < list.size()){
+			ImageView objRightNow = list.get(count);
+			if(count%4 == 0){
+				setPosition(objRightNow, size, size, 0, positions[count]);
+			}
+			if(count%4 == 1){
+				setPosition(objRightNow, size, size, positions[count], 0);
+			}
+			if(count%4 == 2){
+				setPosition(objRightNow, size, size, SIZE-size, positions[count]);
+			}
+			if(count%4 == 3){
+				setPosition(objRightNow, size, size, positions[count], SIZE-size);
+			}
 			count++;
 		}
 	}
@@ -240,6 +254,14 @@ public class TheGame {
 		return temp;
 	}
 	
+	public float[] generateAcceleration(int elems){
+		float[] temp = new float[elems];
+		for(int i=0;i<elems;i++){
+			temp[i] = (float)(((Math.random() * 200) + 100) / 100.0);
+		}
+		return temp;
+	}
+	
 	public void eatObjects(ImageView character, ImageView object){
 		if(character.getBoundsInParent().intersects(object.getBoundsInParent())){
 			Image temp = null;
@@ -249,14 +271,6 @@ public class TheGame {
 		}
 	}
 	
-	public void eatJam(ImageView character, ImageView object){
-		if(character.getBoundsInParent().intersects(object.getBoundsInParent())){
-			Image temp = null;
-			object.setImage(temp);
-			System.gc();
-			return;
-		}
-	}
 	
 	public boolean reachHome(ImageView character, ImageView object){
 		boolean val = false;
@@ -272,14 +286,14 @@ public class TheGame {
 			object.setX(object.getX() + direction * objSpeed * elapsedTime);
 			object.setY(object.getY() + direction * objSpeed * elapsedTime);
 		}
-		else if(xy%4 == 1){
+		if(xy%4 == 1){
 			object.setX(object.getX() - direction * objSpeed * elapsedTime);
 			object.setY(object.getY() + direction * objSpeed * elapsedTime);
 		}
-		else if(xy%4 == 2){
+		if(xy%4 == 2){
 			object.setX(object.getX() + direction * objSpeed * elapsedTime);
 		}
-		else{
+		if(xy%4 == 3){
 			object.setY(object.getY() + direction * objSpeed * elapsedTime);
 		}
 	}
@@ -288,19 +302,29 @@ public class TheGame {
 			int objSpeed, double elapsedTime){
 		int xDir = xyDir[0];
 		int yDir = xyDir[1];
-		if(xy%4 == 0){
+		if(xy%2 == 0){
 			object.setX(object.getX() + xDir * objSpeed * elapsedTime);
 			object.setY(object.getY() + yDir * objSpeed * elapsedTime);
 		}
-		else if(xy%4 == 1){
+		else{
 			object.setX(object.getX() - xDir * objSpeed * elapsedTime);
 			object.setY(object.getY() + yDir * objSpeed * elapsedTime);
 		}
-		else if(xy%4 == 2){
-			object.setX(object.getX() + xDir * objSpeed * elapsedTime);
+	}
+	
+	public void scatterObjectives(ImageView object, int[] xyDir, float[] accel, int xy, 
+			int objSpeed, double elapsedTime){
+		int xDir = xyDir[0];
+		int yDir = xyDir[1];
+		float xSpeed = accel[0];
+		float ySpeed = accel[1];
+		if(xy%2 == 0){
+			object.setX(object.getX() + xDir * objSpeed * xSpeed * elapsedTime);
+			object.setY(object.getY() + yDir * objSpeed * ySpeed * elapsedTime);
 		}
 		else{
-			object.setY(object.getY() + yDir * objSpeed * elapsedTime);
+			object.setX(object.getX() - xDir * objSpeed * xSpeed * elapsedTime);
+			object.setY(object.getY() + yDir * objSpeed * ySpeed * elapsedTime);
 		}
 	}
 	
@@ -350,8 +374,8 @@ public class TheGame {
 					"JAILBREAK ENABLED", Color.RED));
 		}
 		
-		runGameLoop(jarsOfJam, jarDirection, JAR_SPEED, JAR_SIZE, elapsedTime);
-		runGameLoop(taxis, taxiDirection, TAXI_SPEED, JAR_SIZE, elapsedTime);
+		runSimpleBounce(taxis, taxiDirection, TAXI_SPEED, JAR_SIZE, elapsedTime);
+		runVectorBounce(jarsOfJam, jarDirection, JAR_SPEED, JAR_SIZE, elapsedTime);
 		
 		boolean mugged = false;
 		for(ImageView taxi : taxis){
@@ -378,13 +402,16 @@ public class TheGame {
 		ratDirection = initializeDirection(ratDirection, NUMBER_OF_RATS*2);
 		itemDirection = initializeDirection(itemDirection, 4);
 		rats = makeObjects(NUMBER_OF_RATS, "rats.png");
-		setObjects(rats, NUMBER_OF_RATS, RAT_SIZE);
+		setObjectsInCorner(rats, NUMBER_OF_RATS, RAT_SIZE);
 		star = initSingleObj("star.png");
 		potion = initSingleObj("potion.png");
 		setItemPosition();
 		items = new ArrayList<ImageView>();
 		items.add(star);
 		items.add(potion);
+		ratAcceleration = generateAcceleration(NUMBER_OF_RATS * 4);
+		itemAcceleration = generateAcceleration(NUMBER_OF_ITEMS * 4);
+		MIMI_SIZE = LVL2_MIMI_SIZE;
 	}
 	
 	public void setItemPosition(){
@@ -395,13 +422,11 @@ public class TheGame {
 	
 	public void showLevelTwo(){
 		root.getChildren().clear();
-		setMimiToCorner(rats);
+		setPosition(mimi, MIMI_SIZE, MIMI_SIZE, (SIZE-MIMI_SIZE)/2, (SIZE-MIMI_SIZE)/2);
 		root.getChildren().add(mimi);
 		Text text3 = page.message(SIZE, SIZE, 
 				"You've cleared Level One!\n\nClick to proceed.");
 		root.getChildren().add(text3);
-		setPosition(home, HOME_SIZE, HOME_SIZE, SIZE-HOME_SIZE, SIZE-HOME_SIZE);
-		root.getChildren().add(home);
 		timer.resetTimer();
 	}
 	
@@ -409,10 +434,9 @@ public class TheGame {
 		root.getChildren().clear();
 		root.getChildren().add(mimi);
 		root.getChildren().addAll(rats);
-		root.getChildren().add(home);
 		root.getChildren().addAll(items);
 		root.getChildren().add(page.formattedMessage(SIZE/60, SIZE/20, 
-				"Time Left: " + timer.countdown(20), Color.MAROON));
+				"Time Left: " + timer.countdown(TIME_LIMIT_TWO), Color.MAROON));
 		
 		if(!noJailBreak){
 			root.getChildren().add(page.formattedMessage(SIZE/2, SIZE/20, 
@@ -420,22 +444,20 @@ public class TheGame {
 			
 		}
 		
-		runLevelTwo(rats, ratDirection, RAT_SPEED, RAT_SIZE, elapsedTime);
-		runLevelTwo(items, itemDirection, ITEM_SPEED, ITEM_SIZE, elapsedTime);
+		runRandomBounce(rats, ratDirection, ratAcceleration, RAT_SPEED, RAT_SIZE, elapsedTime);
+		runRandomBounce(items, itemDirection, itemAcceleration, ITEM_SPEED, ITEM_SIZE, elapsedTime);
 		
 		boolean invincible = false;
 		
 		boolean out = false;
 		for(ImageView rat : rats){
 			if(rat.getImage() == null){
-				if(!invincible){
-					out = true;
-					break;
-				}
+				out = true;
+				break;
 			}
 		}
 		
-		if(!invincible && star.getImage() == null){
+		if(star.getImage() == null){
 			invincible = true;
 		}
 		
@@ -444,9 +466,12 @@ public class TheGame {
 			MIMI_SIZE = 10;
 		}
 			
-		if(timer.getTimeValue() >= TIME_LIMIT_TWO) level = 99;
+		if(timer.getTimeValue() >= TIME_LIMIT_TWO){
+			setPosition(home, HOME_SIZE, HOME_SIZE, (SIZE-HOME_SIZE)/2, (SIZE-HOME_SIZE)/2);
+			root.getChildren().add(home);
+		}
 		
-		if(noJailBreak && out){
+		if(noJailBreak && !invincible && out){
 			level = 9;
 		}
 		
@@ -455,7 +480,7 @@ public class TheGame {
 		}
 	}
 
-	private void runGameLoop(ArrayList<ImageView> list, int[] directions, 
+	private void runSimpleBounce(ArrayList<ImageView> list, int[] directions, 
 			int speed, int size, double elapsedTime) {
 		int count = 0;
 		while(count < list.size()){
@@ -469,15 +494,13 @@ public class TheGame {
 		}
 	}
 	
-	private void runLevelTwo(ArrayList<ImageView> list, int[] directions, 
+	private void runVectorBounce(ArrayList<ImageView> list, int[] directions, 
 			int speed, int size, double elapsedTime) {
 		int count = 0;
 		while(count < list.size()){
 			ImageView objRightNow = list.get(count);
 			int[] tempDir = new int[2];
-			
-			System.arraycopy(directions, count*2, tempDir, 0, 2);
-			
+			System.arraycopy(directions, count*2, tempDir, 0, 2);		
 			bounceObjectives(objRightNow, tempDir, count, 
 					speed, elapsedTime);
 			System.arraycopy(bounceInBounds(myScene, objRightNow, 
@@ -485,6 +508,28 @@ public class TheGame {
 					0, tempDir, 0, tempDir.length);
 			eatObjects(mimi, objRightNow);
 			
+			System.arraycopy(tempDir, 0, directions, count*2, 2);
+			count++;
+		}
+	}
+	
+	private void runRandomBounce(ArrayList<ImageView> list, int[] directions, 
+			float[] accel, int speed, int size, double elapsedTime){
+		int count = 0;
+		while(count < list.size()){
+			ImageView objRightNow = list.get(count);
+			int[] tempDir = new int[2];
+			float[] tempAccel = new float[2];
+			
+			System.arraycopy(directions, count*2, tempDir, 0, 2);
+			System.arraycopy(accel, count*2, tempAccel, 0, 2);
+			
+			scatterObjectives(objRightNow, tempDir, tempAccel, count, speed, elapsedTime);
+			System.arraycopy(bounceInBounds(myScene, objRightNow, 
+					directions[count*2], directions[count*2+1], size), 
+					0, tempDir, 0, tempDir.length);
+			eatObjects(mimi, objRightNow);
+
 			System.arraycopy(tempDir, 0, directions, count*2, 2);
 			count++;
 		}
@@ -519,15 +564,12 @@ public class TheGame {
                 
             //Jailbreak Cheat Code: Press Q
             case Q:
-            	noJailBreak = !noJailBreak;
-            	if(noJailBreak){
-            		System.out.println("Jailbreak Disabled!");
-            	}
-            	else{
+            	noJailBreak = false;
+            	if(!noJailBreak){
             		System.out.println("Jailbreak Enabled!");
             	}
             	break;
-            default: // do nothing
+            default:
         }
     }
     
@@ -537,6 +579,7 @@ public class TheGame {
     		level++;
     		return;
     	}
+    	
     	if(level == 8 || level == 9 || level == 10 || level == 99){
     		level = 100;
     		return;
