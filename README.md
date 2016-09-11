@@ -3,10 +3,14 @@ First project for CompSci 308 Fall 2016 by Ray Song(ys101).
 
 ## Programming Log
 
+**Sept 11th**
++ Implemented different object-moving algorithm for Level Two.
+
+
 **Sept 10th**
 + Implemented visual timer and time limits for each stage
 + Added power-ups to level 2 (star = invincible, potion = Mimi becomes smaller)
-+ Added cheat key (press Q to become invincible at any point in time) 
++ Added cheat key: **press Q to become invincible at any point in time**
 
 **Sept 9th**
 + Implemented Level One and Level Two
@@ -20,7 +24,7 @@ First project for CompSci 308 Fall 2016 by Ray Song(ys101).
 + Updated image to vector files for better view.
 
 **Sept 5th**
-+ Added cheat code to game: **Clicking on the vertical-moving strawberry will automatically end game**
++ Added cheat code to game: Clicking on the vertical-moving strawberry will automatically end game
 + Struggling (mightily) with implementing end-of-game messages.
 
 **Sept 4th**

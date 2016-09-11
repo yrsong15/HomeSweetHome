@@ -11,29 +11,29 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 public class TheGame {
-	public static final String TITLE = "Home Sweet Home";
-	public static final int SIZE = 600;
-	public static int KEY_INPUT_SPEED = 50; 
+	private final String TITLE = "Home Sweet Home";
+	private final int SIZE = 600;
 	
-	private static int MIMI_SIZE = 50;
-	private static final int HOME_SIZE = 30;
-	private static final int RAT_SIZE = 25;
-	private static final int JAR_SIZE = 20;
-	private static final int TAXI_SIZE = 40;
-	private static final int ITEM_SIZE = 30;
+	private final int HOME_SIZE = 30;
+	private final int RAT_SIZE = 25;
+	private final int JAR_SIZE = 20;
+	private final int TAXI_SIZE = 40;
+	private final int ITEM_SIZE = 20;
 	
-	private static final int RAT_SPEED = 60;
-	private static final int JAR_SPEED = 40;
-	private static final int TAXI_SPEED = 100;
-	private static final int ITEM_SPEED = 200;
+	private final int RAT_SPEED = 60;
+	private final int JAR_SPEED = 40;
+	private final int TAXI_SPEED = 100;
+	private final int ITEM_SPEED = 300;
 	
-	private static final int NUMBER_OF_JARS = 5;
-	private static final int NUMBER_OF_TAXIS = 10;
-	private static final int NUMBER_OF_RATS = 30;
+	private final int NUMBER_OF_JARS = 5;
+	private final int NUMBER_OF_TAXIS = 10;
+	private final int NUMBER_OF_RATS = 30;
 	
-	private static final float TIME_LIMIT_ONE = 15f;
-	private static final float TIME_LIMIT_TWO = 20f;
-	
+	private final float TIME_LIMIT_ONE = 15f;
+	private final float TIME_LIMIT_TWO = 20f;
+
+	private int KEY_INPUT_SPEED = 50;
+	private int MIMI_SIZE = 50;
 	
 	private SplashPage page;
 	private Scene myScene;
@@ -45,7 +45,6 @@ public class TheGame {
 	
 	private Group root;
 	private int level;
-	private boolean invincible = false;
 	private boolean noJailBreak = true;
 	
 	public Scene init(int width, int height){
@@ -241,16 +240,6 @@ public class TheGame {
 		return temp;
 	}
 	
-	public int keepInBounds(Scene scene, ImageView temp, int direction, int size){
-		if(temp.getX() > scene.getWidth() - size || temp.getX() < 0){
-			direction *= -1;
-		}
-		if(temp.getY() > scene.getHeight() - size || temp.getY() < 0){
-			direction *= -1;
-		}
-		return direction;
-	}
-	
 	public void eatObjects(ImageView character, ImageView object){
 		if(character.getBoundsInParent().intersects(object.getBoundsInParent())){
 			Image temp = null;
@@ -287,13 +276,55 @@ public class TheGame {
 			object.setX(object.getX() - direction * objSpeed * elapsedTime);
 			object.setY(object.getY() + direction * objSpeed * elapsedTime);
 		}
-		else if(xy%4 == 3){
+		else if(xy%4 == 2){
 			object.setX(object.getX() + direction * objSpeed * elapsedTime);
 		}
 		else{
 			object.setY(object.getY() + direction * objSpeed * elapsedTime);
 		}
 	}
+	
+	public void bounceObjectives(ImageView object, int[] xyDir, int xy, 
+			int objSpeed, double elapsedTime){
+		int xDir = xyDir[0];
+		int yDir = xyDir[1];
+		if(xy%4 == 0){
+			object.setX(object.getX() + xDir * objSpeed * elapsedTime);
+			object.setY(object.getY() + yDir * objSpeed * elapsedTime);
+		}
+		else if(xy%4 == 1){
+			object.setX(object.getX() - xDir * objSpeed * elapsedTime);
+			object.setY(object.getY() + yDir * objSpeed * elapsedTime);
+		}
+		else if(xy%4 == 2){
+			object.setX(object.getX() + xDir * objSpeed * elapsedTime);
+		}
+		else{
+			object.setY(object.getY() + yDir * objSpeed * elapsedTime);
+		}
+	}
+	
+	public int keepInBounds(Scene scene, ImageView temp, int direction, int size){
+		if(temp.getX() > scene.getWidth() - size || temp.getX() < 0){
+			direction *= -1;
+		}
+		if(temp.getY() > scene.getHeight() - size || temp.getY() < 0){
+			direction *= -1;
+		}
+		return direction;
+	}
+	
+	public int[] bounceInBounds(Scene scene, ImageView temp, int xDir, int yDir, int size){
+		int[] xydir = {xDir, yDir};
+		if(temp.getX() > scene.getWidth() - size || temp.getX() < 0){
+			xydir[0] *= -1;
+		}
+		if(temp.getY() > scene.getHeight() - size || temp.getY() < 0){
+			xydir[1] *= -1;
+		}
+		return xydir;
+	}
+	
 	
 	public ArrayList<ImageView> makeObjects(int num, String filename){
 		ArrayList<ImageView> list = new ArrayList<>();
@@ -344,8 +375,8 @@ public class TheGame {
 	}
 	
 	public void initLevelTwo(){
-		ratDirection = initializeDirection(ratDirection, NUMBER_OF_RATS);
-		itemDirection = initializeDirection(itemDirection, 2);
+		ratDirection = initializeDirection(ratDirection, NUMBER_OF_RATS*2);
+		itemDirection = initializeDirection(itemDirection, 4);
 		rats = makeObjects(NUMBER_OF_RATS, "rats.png");
 		setObjects(rats, NUMBER_OF_RATS, RAT_SIZE);
 		star = initSingleObj("star.png");
@@ -364,7 +395,6 @@ public class TheGame {
 	
 	public void showLevelTwo(){
 		root.getChildren().clear();
-//		setPosition(mimi, MIMI_SIZE, MIMI_SIZE, 0, 0);
 		setMimiToCorner(rats);
 		root.getChildren().add(mimi);
 		Text text3 = page.message(SIZE, SIZE, 
@@ -390,8 +420,10 @@ public class TheGame {
 			
 		}
 		
-		runGameLoop(rats, ratDirection, RAT_SPEED, RAT_SIZE, elapsedTime);
-		runGameLoop(items, itemDirection, ITEM_SPEED, ITEM_SIZE, elapsedTime);
+		runLevelTwo(rats, ratDirection, RAT_SPEED, RAT_SIZE, elapsedTime);
+		runLevelTwo(items, itemDirection, ITEM_SPEED, ITEM_SIZE, elapsedTime);
+		
+		boolean invincible = false;
 		
 		boolean out = false;
 		for(ImageView rat : rats){
@@ -411,7 +443,6 @@ public class TheGame {
 			mimi = minimize(mimi);
 			MIMI_SIZE = 10;
 		}
-		
 			
 		if(timer.getTimeValue() >= TIME_LIMIT_TWO) level = 99;
 		
@@ -434,6 +465,27 @@ public class TheGame {
 			directions[count] = keepInBounds(myScene, objRightNow, 
 					directions[count], size);
 			eatObjects(mimi, objRightNow);
+			count++;
+		}
+	}
+	
+	private void runLevelTwo(ArrayList<ImageView> list, int[] directions, 
+			int speed, int size, double elapsedTime) {
+		int count = 0;
+		while(count < list.size()){
+			ImageView objRightNow = list.get(count);
+			int[] tempDir = new int[2];
+			
+			System.arraycopy(directions, count*2, tempDir, 0, 2);
+			
+			bounceObjectives(objRightNow, tempDir, count, 
+					speed, elapsedTime);
+			System.arraycopy(bounceInBounds(myScene, objRightNow, 
+					directions[count*2], directions[count*2+1], size), 
+					0, tempDir, 0, tempDir.length);
+			eatObjects(mimi, objRightNow);
+			
+			System.arraycopy(tempDir, 0, directions, count*2, 2);
 			count++;
 		}
 	}
