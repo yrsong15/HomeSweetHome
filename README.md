@@ -5,7 +5,8 @@ First project for CompSci 308 Fall 2016 by Ray Song(ys101).
 
 **Sept 11th**
 + Implemented different object-moving algorithm for Level Two.
-
++ Refined messages between levels.
++ Fixed end-of-game bug triggered by image file size.
 
 **Sept 10th**
 + Implemented visual timer and time limits for each stage
@@ -33,9 +34,6 @@ First project for CompSci 308 Fall 2016 by Ray Song(ys101).
 **Sept 3rd** 
 + Completed crude version of Level One. Game automatically shuts down when all three strawberries are consumed. 
 
-**TODO**
-+ TODO: Implement more challenging Level 2
-+ TODO: Refine instructions on splash pages for games
 
 ## Design
 The game design has been detailed on DESIGN.txt. It can also be viewed below; I personally prefer *Markdown* to normal *.txt* files.
