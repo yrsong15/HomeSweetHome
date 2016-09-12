@@ -7,6 +7,7 @@ First project for CompSci 308 Fall 2016 by Ray Song(ys101).
 + Implemented different object-moving algorithm for Level Two.
 + Refined messages between levels.
 + Fixed end-of-game bug triggered by image file size.
++ Final push.
 
 **Sept 10th**
 + Implemented visual timer and time limits for each stage
@@ -65,19 +66,17 @@ wake up.
 then return home before Ray and Nicole wake up.
 
 **Basic Mechanics**
-+ The player will be controlling Mimi with the four directional keys (it's Manhattan, so Mimi can't move diagonally). Strawberry jam will appear randomly on the screen, and Mimi will collect each jar by coming in contact with the jar.
++ The player will be controlling Mimi with the four directional keys (it's Manhattan, so Mimi can't move diagonally). Strawberry jam will appear randomly on the screen, and Mimi will collect each jar by coming in contact with the jar. 
+
++ The city is full of wild taxi drivers, whom Mimi must avoid deftly.
 
 + When all jars are collected, Mimi will then embark on a mission back home before it's too late.
 
 **Levels/Modes**
 + Level One is the game mentioned above. The player wins when Mimi is able to collect three jars within the given space of time. 
 
-+ Level Two, which is reached when the player clears Level One, differs from Level One in that
-Mimi now wants to eat strawberry jam sandwiches. However, due to Mimi's diminutive size,
-she can't carry around a whole loaf of bread. In Level Two, Mimi will have to first collect 
-a loaf of bread, from which she will just take two slices. She will then collect strawberry 
-jam and Nutella, in that order, because she likes strawberry jam more than Nutella.
++ Level Two, which is reached when the player clears Level One, helps Mimi get back home safely before Ray and Nicole wake up. Unfortunately, the city is full of mice - which Mimi happens to hate, despite being a fur rat herself. And because the rats are a little more unorganized than Taxi drivers, they tend to move around much more randomly.
 
-+ In short, in Level Two, Mimi has to collect the three items in order, whereas the order of 
-strawberry jam did not matter in Level One. The window of time will be the same, so Mimi will
-have to plan her trip carefully; if not, Ray and Nicole are going to be absolutely furious.
++ After wandering around, Mimi finally gets a sense of where home (which will appear on screen after some time) is. The game is over when Mimi arrives home safely. 
+
+

@@ -1,3 +1,10 @@
+/**
+ * Customized timer class that provides running time
+ * as well as time in countdown mode for display.
+ * 
+ * @author Ray Song
+ *
+ */
 
 public class Timer{
 	private long startTime;

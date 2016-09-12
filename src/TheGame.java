@@ -1,3 +1,11 @@
+/**
+ * Contains all of the main code for "Home Sweet Home".
+ * Gameplay can be altered by changing the final variables
+ * listed on the top of code.
+ * 
+ * @author Ray Song
+ */
+
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -21,6 +29,7 @@ public class TheGame {
 	private final int ITEM_SIZE = 20;
 	private final int LVL1_MIMI_SIZE = 40;
 	private final int LVL2_MIMI_SIZE = 30;
+	private final int POTION_MIMI_SIZE = 30;
 	
 	private final int RAT_SPEED = 45;
 	private final int JAR_SPEED = 40;
@@ -30,7 +39,7 @@ public class TheGame {
 	private final int NUMBER_OF_ITEMS = 2;
 	private final int NUMBER_OF_JARS = 5;
 	private final int NUMBER_OF_TAXIS = 10;
-	private final int NUMBER_OF_RATS = 20;
+	private final int NUMBER_OF_RATS = 25;
 	
 	private final float TIME_LIMIT_ONE = 15f;
 	private final float TIME_LIMIT_TWO = 10f;
@@ -198,11 +207,11 @@ public class TheGame {
 	private void setMimiPosition(ArrayList<ImageView> list) {
 		int[] mimiPosition = generateRandom(2, 0, SIZE-MIMI_SIZE);
 		for(int i=0;i<list.size();i++){
-			if(Math.abs(list.get(i).getX() - mimiPosition[0]) < MIMI_SIZE){
+			if(Math.abs(list.get(i).getX() - mimiPosition[0]) < MIMI_SIZE * 1.5){
 				mimiPosition[0] = ThreadLocalRandom.current().nextInt(0, SIZE-MIMI_SIZE + 1);
 				i = 0;
 			}
-			if(Math.abs(list.get(i).getY() - mimiPosition[1]) < MIMI_SIZE){
+			if(Math.abs(list.get(i).getY() - mimiPosition[1]) < MIMI_SIZE * 1.5){
 				mimiPosition[1] = ThreadLocalRandom.current().nextInt(0, SIZE-MIMI_SIZE + 1);
 				i = 0;
 			}
@@ -262,9 +271,9 @@ public class TheGame {
 		return temp;
 	}
 	
-	public ImageView minimize(ImageView temp){
-		temp.setFitWidth(10);
-		temp.setFitHeight(10);
+	public ImageView minimize(ImageView temp, int size){
+		temp.setFitWidth(size);
+		temp.setFitHeight(size);
 		return temp;
 	}
 	
@@ -293,17 +302,23 @@ public class TheGame {
 		}
 	}
 	
-	
 	public boolean reachHome(ImageView character, ImageView object){
 		boolean val = false;
 		if(character.getBoundsInParent().intersects(object.getBoundsInParent())){
-			System.out.println(character.getBoundsInParent());
-			System.out.println(object.getBoundsInLocal());
 			val = true;
 		}
 		return val;
 	}
 	
+	/**
+	 * Rudimentary way of moving objects either horizontally, vertically, or diagonally.
+	 * 
+	 * @param object: ImageView that is moved
+	 * @param direction: Plus-minus one value for directionality
+	 * @param xy: Order of object in stored list to randomize direction
+	 * @param objSpeed: Speed of object (final value)
+	 * @param elapsedTime: Elapsed time of game loop
+	 */
 	public void moveObjectives(ImageView object, int direction, int xy, 
 			int objSpeed, double elapsedTime){
 		if(xy%4 == 0){
@@ -322,6 +337,15 @@ public class TheGame {
 		}
 	}
 	
+	/**
+	 * Moves objects in a slightly more advanced way by enabling diagonal bounce.
+	 * 
+	 * @param object: ImageView that is moved
+	 * @param xyDir: Array that holds directionality for x,y axes
+	 * @param xy: Order of object in stored list to randomize direction
+	 * @param objSpeed: Speed of object (final value)
+	 * @param elapsedTime: Elapsed time of game loop
+	 */
 	public void bounceObjectives(ImageView object, int[] xyDir, int xy, 
 			int objSpeed, double elapsedTime){
 		int xDir = xyDir[0];
@@ -336,6 +360,17 @@ public class TheGame {
 		}
 	}
 	
+	/**
+	 * Advanced form of bounce that enables random movement on every bounce,
+	 * as opposed to bouncing around in a set path.
+	 * 
+	 * @param object: ImageView that is moved
+	 * @param xyDir: Array that holds directionality for x,y axes
+	 * @param accel: Array that holds randomized acceleration values.
+	 * @param xy: Order of object in stored list to randomize direction
+	 * @param objSpeed: Speed of object (final value)
+	 * @param elapsedTime: Elapsed time of game loop
+	 */
 	public void scatterObjectives(ImageView object, int[] xyDir, float[] accel, int xy, 
 			int objSpeed, double elapsedTime){
 		int xDir = xyDir[0];
@@ -484,8 +519,8 @@ public class TheGame {
 			
 		}
 		
-		runRandomBounce(rats, ratDirection, ratAcceleration, RAT_SPEED, RAT_SIZE, elapsedTime);
-		runRandomBounce(items, itemDirection, itemAcceleration, ITEM_SPEED, ITEM_SIZE, elapsedTime);
+		runAcceleratedBounce(rats, ratDirection, ratAcceleration, RAT_SPEED, RAT_SIZE, elapsedTime);
+		runAcceleratedBounce(items, itemDirection, itemAcceleration, ITEM_SPEED, ITEM_SIZE, elapsedTime);
 		
 		boolean invincible = false;
 		
@@ -502,8 +537,8 @@ public class TheGame {
 		}
 		
 		if(potion.getImage() == null){
-			mimi = minimize(mimi);
-			MIMI_SIZE = 10;
+			mimi = minimize(mimi, POTION_MIMI_SIZE);
+			MIMI_SIZE = POTION_MIMI_SIZE;
 		}
 			
 		if(timer.getTimeValue() >= TIME_LIMIT_TWO){
@@ -553,7 +588,7 @@ public class TheGame {
 		}
 	}
 	
-	private void runRandomBounce(ArrayList<ImageView> list, int[] directions, 
+	private void runAcceleratedBounce(ArrayList<ImageView> list, int[] directions, 
 			float[] accel, int speed, int size, double elapsedTime){
 		int count = 0;
 		while(count < list.size()){
@@ -625,8 +660,8 @@ public class TheGame {
     		return;
     	}
     	
+    	//Cheat Code: Press Mimi to advance to Level Two
         if (mimi.contains(x, y)) {
-        	System.out.println("Cheat Code - Proceed to Level Two");
             level = 3;
         }
     }

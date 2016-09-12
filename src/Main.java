@@ -1,3 +1,10 @@
+/**
+ * This is the main function that is to be run for 
+ * my Compsci 308 Game project, "Home Sweet Home".
+ * 
+ * @author Ray Song
+ */
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 	 

@@ -1,3 +1,10 @@
+/**
+ * Separate class for messages that splash across
+ * the screen between different game levels.
+ * 
+ * @author Ray Song
+ */
+
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;

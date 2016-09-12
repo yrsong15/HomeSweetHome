@@ -1,3 +1,10 @@
+/**
+ * Creates a single instance of the Game file and
+ * creates the loop on which the game is based.
+ * 
+ * @author Ray Song
+ */
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
