@@ -25,12 +25,12 @@ public class TheGame {
 	private final int RAT_SPEED = 45;
 	private final int JAR_SPEED = 40;
 	private final int TAXI_SPEED = 100;
-	private final int ITEM_SPEED = 300;
+	private final int ITEM_SPEED = 200;
 	
 	private final int NUMBER_OF_ITEMS = 2;
 	private final int NUMBER_OF_JARS = 5;
 	private final int NUMBER_OF_TAXIS = 10;
-	private final int NUMBER_OF_RATS = 15;
+	private final int NUMBER_OF_RATS = 20;
 	
 	private final float TIME_LIMIT_ONE = 15f;
 	private final float TIME_LIMIT_TWO = 10f;
@@ -91,24 +91,30 @@ public class TheGame {
 		
 		if(level == 8){
 			root.getChildren().add(showMessage
-					("Mimi didn't watch where she was going!\n\nGet well soon :("
+					("Mimi didn't watch where she was going!\n\n"
+							+ "Get well soon :(\n\n"
+							+ "Click to Exit Game."
 					,Color.MAROON));
 		}
 		
 		
 		if(level == 9){
 			root.getChildren().add(showMessage
-					("The rats got Mimi!\n\nGet well soon :("
+					("The rats got Mimi!\n\n"
+							+ "Get well soon :(\n\n"
+							+ "Click to Exit Game."
 					, Color.MAROON));
 		}
 		if(level == 10){
 			root.getChildren().add(showMessage
-					("You're DONE!!!!\n\nClick to exit."));
+					("Congratulations, Mimi is back home!!!!\n\n"
+							+ "Click to Exit Game."));
 		}
 		
 		if(level == 99){
 			root.getChildren().add(showMessage
 					("Time out! Mimi has to run faster :("
+							+ "Click to Exit Game."
 					, Color.MAROON));
 		}
 		
@@ -144,9 +150,25 @@ public class TheGame {
 		
 		MIMI_SIZE = LVL1_MIMI_SIZE;
 		
-		Text firstmsg = page.message(SIZE, SIZE, 
-				"Click anywhere to proceed to game");
+		Text firstmsg = page.formattedMessage(SIZE/2 - 100, SIZE/6, 
+				"Home Sweet Home", Color.MAROON);
+		
+		Text explain = page.formattedMessage(20, SIZE/4, 17,
+				"Mimi the Fur Dog is a 70-year-old puppy\n"
+				+ "who eats nothing but strawberry jam.\n"
+				+ "One night, she woke up in 3AM, only to learn\n"
+				+ "that the fridge was out of strawberry jam!!!\n\n"
+				+ "Use the arrow keys to help Mimi collect all jars.\n\n"
+				+ "Because this is New York, Mimi must avoid\n"
+				+ "the crazy yellow cabs while she's on the hunt.\n\n"
+				+ "Level One will be over when Mimi collects all the jars.\n\n"
+				+ "CHEAT KEY: Click on Mimi with mouse to Proceed to Level 2\n"
+				+ "CHEAT KEY: Press 'q' to enable jailbreak, which enables\n"
+				+ "			Mimi to run off the map, as well as make her\n"
+				+ "			immune to taxi/mice.\n\n"
+				+ "Click anywhere on the screen to proceed.");
 		root.getChildren().add(firstmsg);
+		root.getChildren().add(explain);
 		level = 0;
 		
 		jarDirection = initializeDirection(jarDirection, NUMBER_OF_JARS*2);
@@ -275,6 +297,8 @@ public class TheGame {
 	public boolean reachHome(ImageView character, ImageView object){
 		boolean val = false;
 		if(character.getBoundsInParent().intersects(object.getBoundsInParent())){
+			System.out.println(character.getBoundsInParent());
+			System.out.println(object.getBoundsInLocal());
 			val = true;
 		}
 		return val;
@@ -423,20 +447,36 @@ public class TheGame {
 	public void showLevelTwo(){
 		root.getChildren().clear();
 		setPosition(mimi, MIMI_SIZE, MIMI_SIZE, (SIZE-MIMI_SIZE)/2, (SIZE-MIMI_SIZE)/2);
-		root.getChildren().add(mimi);
-		Text text3 = page.message(SIZE, SIZE, 
-				"You've cleared Level One!\n\nClick to proceed.");
+		Text text3 = page.formattedMessage(20, SIZE/6, 17,
+				"You've cleared Level One!\n\n"
+				+ "Now that she has a handful of jars,\n"
+				+ "Mimi wants to go back home to enjoy her jam.\n\n"
+				+ "Use the arrow keys to avoid the rats.\n\n"
+				+ "The potion will make Mimi smaller and help her avoid rats.\n"
+				+ "The star will make Mimi invincible and immune to rats.\n\n"
+				+ "After " + TIME_LIMIT_TWO
+				+ " seconds, Mimi's home will appear \n"
+				+ "on the center of the screen.\n\n"
+				+ "The game will end when Mimi arrives home,\n"
+				+ "so once Mimi's home appears, guide her back!\n\n"
+				+ "Click anywhere on screen to proceed.");
 		root.getChildren().add(text3);
 		timer.resetTimer();
 	}
 	
 	public void gameLevelTwo(double elapsedTime){
 		root.getChildren().clear();
+		
+		/* This is to counter an unintended bug where moving Mimi to the upper-left corner
+		 * would trigger the reachHome(mimi,home) condition and end the game.
+		 */
+		setPosition(home, 0, 0, -5000, -5000);
+		
 		root.getChildren().add(mimi);
 		root.getChildren().addAll(rats);
 		root.getChildren().addAll(items);
 		root.getChildren().add(page.formattedMessage(SIZE/60, SIZE/20, 
-				"Time Left: " + timer.countdown(TIME_LIMIT_TWO), Color.MAROON));
+				"Time Until Home: " + timer.countdown(TIME_LIMIT_TWO), Color.MAROON));
 		
 		if(!noJailBreak){
 			root.getChildren().add(page.formattedMessage(SIZE/2, SIZE/20, 
