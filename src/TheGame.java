@@ -1,5 +1,15 @@
+// This entire file is part of my masterpiece.
+// Ray Song(ys101)
+//Lines 67-137: Essentially the backbone of the lone TheGame.java file.
+//Lines 170-208: Initializing the entire game using varieties of helper methods
+//Lines 380-406: Random bounce algorithm that alters angle at which objects bounce off walls
+//Lines 418-440: General-purposes helper methods applicable to any object in game
+//Lines 613-632: Game Loop algorithm for Level Two
+
+
 /**
- * Contains all of the main code for "Home Sweet Home".
+ 
+* Contains all of the main code for "Home Sweet Home".
  * Gameplay can be altered by changing the final variables
  * listed on the top of code.
  * 
@@ -60,6 +70,9 @@ public class TheGame {
 	private int level;
 	private boolean noJailBreak = true;
 	
+	
+	// The following lines (67-137) are part of my masterpiece.
+	// Ray Song(ys101)
 	public Scene init(int width, int height){
 		initializeMap();
 		myScene = new Scene(root, width, height, Color.BEIGE);
@@ -152,6 +165,8 @@ public class TheGame {
 		return SIZE;
 	}
 	
+	// The following lines (170-208) are part of my masterpiece.
+	// Ray Song(ys101)
 	public void initializeMap(){
 		root = new Group();
 		page = new SplashPage();
@@ -360,6 +375,8 @@ public class TheGame {
 		}
 	}
 	
+	// The following lines (380-406) are part of my masterpiece.
+	// Ray Song(ys101)
 	/**
 	 * Advanced form of bounce that enables random movement on every bounce,
 	 * as opposed to bouncing around in a set path.
@@ -371,6 +388,7 @@ public class TheGame {
 	 * @param objSpeed: Speed of object (final value)
 	 * @param elapsedTime: Elapsed time of game loop
 	 */
+	
 	public void scatterObjectives(ImageView object, int[] xyDir, float[] accel, int xy, 
 			int objSpeed, double elapsedTime){
 		int xDir = xyDir[0];
@@ -397,6 +415,8 @@ public class TheGame {
 		return direction;
 	}
 	
+	// The following lines (418-440) are part of my masterpiece.
+	// Ray Song(ys101)
 	public int[] bounceInBounds(Scene scene, ImageView temp, int xDir, int yDir, int size){
 		int[] xydir = {xDir, yDir};
 		if(temp.getX() > scene.getWidth() - size || temp.getX() < 0){
@@ -588,6 +608,8 @@ public class TheGame {
 		}
 	}
 	
+	// The following lines (613-632) are part of my masterpiece.
+	// Ray Song(ys101)
 	private void runAcceleratedBounce(ArrayList<ImageView> list, int[] directions, 
 			float[] accel, int speed, int size, double elapsedTime){
 		int count = 0;
