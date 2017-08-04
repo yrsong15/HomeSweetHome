@@ -12,7 +12,7 @@ First project for CompSci 308 Fall 2016 by Ray Song(ys101).
 + Please refer to my [post-project analysis](https://git.cs.duke.edu/CompSci308_2016Fall/analysis_ys101/blob/master/01_game/ANALYSIS.md) of this project for details.
 
 ## Design
-The game design has been detailed on [DESIGN.md](https://git.cs.duke.edu/young.re.song/game/blob/master/README.md). 
+The game design has been detailed on [DESIGN.md](DESIGN.md). 
 
 ## Miscellaneous
 
